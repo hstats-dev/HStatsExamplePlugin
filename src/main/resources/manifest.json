@@ -1,0 +1,20 @@
+{
+  "Group": "Al3x",
+  "Name": "HStatsExamplePlugin",
+  "Version": "1.0.0",
+  "Description": "Plugin made to test HStats integration.",
+  "Authors": [
+    {
+      "Name": "Al3x"
+    }
+  ],
+  "Website": "play.hytalepvp.club",
+  "ServerVersion": "*",
+  "Dependencies": {
+    "Hytale:AccessControlModule": "*"
+  },
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "Main": "com.al3x.Main",
+  "IncludesAssetPack": true
+}
