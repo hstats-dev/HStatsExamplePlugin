@@ -14,8 +14,7 @@ public class Main extends JavaPlugin {
     @Override
     protected void setup() {
         super.setup();
-
-        new HStats("TEST-PLUGIN-UUID", "1.0.0");
+        new HStats("c16419ab-f954-4961-b679-63fceceb11e8", "1.0.0");
     }
 
     @Override

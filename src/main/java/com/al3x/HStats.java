@@ -6,6 +6,8 @@
     * can easily integrate HStats into your plugin.
     *
     * You are not allowed to modify the code in this file besides the package name.
+    * If you are found to have modified information being sent to HStats, you will be
+    * banned from using the service. (Also it's a stats website why would you do that)
     *
     * Created by Al3xWarrior
  */
@@ -49,10 +51,18 @@ public class HStats {
 
         // Get or create the server UUID
         this.serverUUID = getServerUUID();
+        if (this.serverUUID == null) {
+            System.out.println("[HStats] Metrics are disabled on this server.");
+            return; // Metrics disabled by server owner
+        }
 
-        HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(this::logMetrics, 0, 10, TimeUnit.SECONDS);
-
+        logMetrics();
         addPluginToServer();
+        HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(this::logMetrics, 10, 10, TimeUnit.SECONDS);
+    }
+
+    public HStats(String pluginUUID) {
+        this(pluginUUID, "unknown");
     }
 
     private void logMetrics() {
@@ -80,10 +90,18 @@ public class HStats {
         Path serverUUIDFile = Paths.get("hstats-server-uuid.txt");
         try {
             if (Files.exists(serverUUIDFile)) {
-                return Files.readString(serverUUIDFile).trim().split("\n")[3];
+                String content = Files.readString(serverUUIDFile);
+                content = content.trim();
+                String[] lines = content.split("\n");
+                if (lines.length < 5)
+                    return null;
+                String enabled = lines[3].split("=")[1].trim();
+                if (!enabled.equalsIgnoreCase("true"))
+                    return null;
+                return lines[4];
             } else {
                 String uuid = UUID.randomUUID().toString();
-                Files.writeString(serverUUIDFile, "HStats - Hytale Plugin Metrics (hstats.dev)\nHStats is a simple metrics system for Hytale plugins. This file is here because one of your mods/plugins uses it, please do not modify this file.\n\n" + uuid);
+                Files.writeString(serverUUIDFile, "HStats - Hytale Plugin Metrics (hstats.dev)\nHStats is a simple metrics system for Hytale plugins. This file is here because one of your mods/plugins uses it, please do not modify the UUID. HStats will apply little to no effect on your server and analytics are anonymous, however you can still disable it.\n\nenabled=true\n" + uuid);
                 return uuid;
             }
         } catch (IOException e) {
