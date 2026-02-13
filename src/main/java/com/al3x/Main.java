@@ -14,7 +14,7 @@ public class Main extends JavaPlugin {
     @Override
     protected void setup() {
         super.setup();
-        new HStats("c16419ab-f954-4961-b679-63fceceb11e8", "1.0.0");
+        new HStats("c34a2b1a-afe8-4d4c-8e1e-7a62e82e5cb6", "1.0.0");
     }
 
     @Override

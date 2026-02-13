@@ -1,9 +1,9 @@
 /*
-    * HStats - Hytale Plugin Metrics (hstats.dev)
+    * HStats - Hytale Mod Metrics (hstats.dev)
     *
-    * HStats is a simple metrics system for Hytale plugins. Inspired by bStats.
-    * This file is designed to be copied into your plugin's source code, so you
-    * can easily integrate HStats into your plugin.
+    * HStats is a simple metrics system for Hytale mods. Inspired by bStats.
+    * This file is designed to be copied into your mod's source code, so you
+    * can easily integrate HStats into your mod.
     *
     * You are not allowed to modify the code in this file besides the package name.
     * If you are found to have modified information being sent to HStats, you will be
@@ -32,22 +32,22 @@ import java.util.concurrent.TimeUnit;
 
 public class HStats {
 
-    private final String URL_BASE = "http://localhost:3000/api/"; // "http://localhost:3000/api/"
-    private final boolean DEBUG = true; // This is for development purposes only
+    private final String URL_BASE = "https://api.hstats.dev/api/";
+    private final boolean DEBUG = false; // This is for development purposes only
 
-    private final String pluginUUID;
-    private final String pluginVersion;
+    private final String modUUID;
+    private final String modVersion;
     private final String serverUUID;
 
     /**
-     * Initializes HStats for your plugin.
+     * Initializes HStats for your mod.
      *
-     * @param pluginUUID    The unique UUID of your plugin. You can find this by creating an account on hstats.dev and registering your plugin.
-     * @param pluginVersion The current version of your plugin. This is determined by you.
+     * @param modUUID    The unique UUID of your mod. You can find this by creating an account on hstats.dev and registering your mod.
+     * @param modVersion The current version of your mod. This is determined by you.
      */
-    public HStats(String pluginUUID, String pluginVersion) {
-        this.pluginUUID = pluginUUID;
-        this.pluginVersion = pluginVersion;
+    public HStats(String modUUID, String modVersion) {
+        this.modUUID = modUUID;
+        this.modVersion = modVersion;
 
         // Get or create the server UUID
         this.serverUUID = getServerUUID();
@@ -57,12 +57,12 @@ public class HStats {
         }
 
         logMetrics();
-        addPluginToServer();
-        HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(this::logMetrics, 10, 10, TimeUnit.SECONDS);
+        addModToServer();
+        HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(this::logMetrics, 1, 1, TimeUnit.MINUTES);
     }
 
-    public HStats(String pluginUUID) {
-        this(pluginUUID, "unknown");
+    public HStats(String modUUID) {
+        this(modUUID, "Unknown");
     }
 
     private void logMetrics() {
@@ -77,11 +77,13 @@ public class HStats {
         sendRequest(URL_BASE + "server/update-server", arguments);
     }
 
-    private void addPluginToServer() {
+    private void addModToServer() {
+        System.out.println("[HStats] Adding mod to server metrics...");
+
         Map<String, String> arguments = new HashMap<>();
         arguments.put("server_uuid", this.serverUUID);
-        arguments.put("plugin_uuid", this.pluginUUID);
-        arguments.put("plugin_version", this.pluginVersion);
+        arguments.put("plugin_uuid", this.modUUID);
+        arguments.put("plugin_version", this.modVersion);
 
         sendRequest(URL_BASE + "server/add-plugin", arguments);
     }
@@ -101,11 +103,11 @@ public class HStats {
                 return lines[4];
             } else {
                 String uuid = UUID.randomUUID().toString();
-                Files.writeString(serverUUIDFile, "HStats - Hytale Plugin Metrics (hstats.dev)\nHStats is a simple metrics system for Hytale plugins. This file is here because one of your mods/plugins uses it, please do not modify the UUID. HStats will apply little to no effect on your server and analytics are anonymous, however you can still disable it.\n\nenabled=true\n" + uuid);
+                Files.writeString(serverUUIDFile, "HStats - Hytale Mod Metrics (hstats.dev)\nHStats is a simple metrics system for Hytale mods. This file is here because one of your mods/plugins uses it, please do not modify the UUID. HStats will apply little to no effect on your server and analytics are anonymous, however you can still disable it.\n\nenabled=true\n" + uuid);
                 return uuid;
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read or create server UUID file", e);
+            return null;
         }
     }
 
