@@ -58,7 +58,7 @@ public class HStats {
 
         logMetrics();
         addModToServer();
-        HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(this::logMetrics, 1, 1, TimeUnit.MINUTES);
+        HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(this::logMetrics, 5, 5, TimeUnit.MINUTES);
     }
 
     public HStats(String modUUID) {
